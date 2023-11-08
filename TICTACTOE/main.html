@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: rgb(53, 114, 53);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            margin: 20px auto;
+            width: 320px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 36px;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Mason's Tic-Tac-Toe</h1>
+
+    <div class="board" id="board"></div>
+    <p id="message">Player X's turn</p>
+    
+    <script>
+        const board = document.getElementById('board');
+        const cells = Array(9).fill(null);
+        let currentPlayer = 'X';
+        let gameWon = false;
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        function checkForWin() {
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                    gameWon = true;
+                    return cells[a];
+                }
+            }
+
+            if (!gameWon && cells.every(cell => cell !== null)) {
+                gameWon = true;
+                return 'Tie';
+            }
+
+            return null;
+        }
+
+        function handleCellClick(index) {
+            if (cells[index] || gameWon) return;
+
+            cells[index] = currentPlayer;
+            board.children[index].textContent = currentPlayer;
+
+            const winner = checkForWin();
+            if (winner) {
+                document.getElementById('message').textContent =
+                    winner === 'Tie' ? "It's a tie!" : `Player ${winner} wins!`;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                document.getElementById('message').textContent = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.addEventListener('click', () => handleCellClick(i));
+            board.appendChild(cell);
+        }
+    </script>
+</body>
+</html>
